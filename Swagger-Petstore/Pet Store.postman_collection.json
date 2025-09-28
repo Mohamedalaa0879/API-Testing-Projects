@@ -1,0 +1,1473 @@
+{
+	"info": {
+		"_postman_id": "f2cc4c3c-a181-4969-999a-17f40852ae04",
+		"name": "Pet Store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30166272"
+	},
+	"item": [
+		{
+			"name": "Pet",
+			"item": [
+				{
+					"name": "Checking sytem",
+					"request": {
+						"method": "HEAD",
+						"header": [],
+						"url": {
+							"raw": "https://petstore.swagger.io",
+							"protocol": "https",
+							"host": [
+								"petstore",
+								"swagger",
+								"io"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add new pet",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function getRandomNumber() {\r",
+									"    return Math.floor(Math.random() * 8) * 50   ;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"id\", getRandomNumber());\r",
+									"console.log(\"RandomNumber set  :\" +  pm.variables.get(\"id\") );\r",
+									"pm.collectionVariables.set(\"category_id\", getRandomNumber());\r",
+									"console.log(\"RandomNumber set  :\" + pm.variables.get(\"category_id\"));\r",
+									"\r",
+									"var timeStamp = new Date().getTime(); // Generate a unique timestamp\r",
+									"var name = \"cat\"+ timeStamp\r",
+									"pm.collectionVariables.set(\"name\", name) \r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var photoUrls = pm.response.json().photoUrls[0];\r",
+									"pm.collectionVariables.set(\"photoUrls\", photoUrls);\r",
+									"console.log(\"pet photoUrls  : \" + photoUrls);\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Test for status code\r",
+									"pm.test('Status code is 200', () => {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"\r",
+									"// Test for response time\r",
+									"pm.test('Response time is less than 1 second', () => {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"\r",
+									"// Test for response content type\r",
+									"pm.test('Content-Type is application/json', () => {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+									"});\r",
+									"\r",
+									"// Test for the presence of properties in the response\r",
+									"pm.test('Response has required properties', () => {\r",
+									"    pm.expect(response).to.have.property('id');\r",
+									"    pm.expect(response).to.have.property('category');\r",
+									"    pm.expect(response).to.have.property('name');\r",
+									"    pm.expect(response).to.have.property('photoUrls');\r",
+									"    pm.expect(response).to.have.property('tags');\r",
+									"    pm.expect(response).to.have.property('status');\r",
+									"});\r",
+									"\r",
+									"// Test for category structure\r",
+									"pm.test('Category has required properties', () => {\r",
+									"    pm.expect(response.category).to.have.property('id');\r",
+									"    pm.expect(response.category).to.have.property('name');\r",
+									"});\r",
+									"\r",
+									"// Test for tags structure\r",
+									"pm.test('Tags is an array and has required properties', () => {\r",
+									"    pm.expect(response.tags).to.be.an('array');\r",
+									"    response.tags.forEach(tag => {\r",
+									"        pm.expect(tag).to.have.property('id');\r",
+									"        pm.expect(tag).to.have.property('name');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Test for photoUrls structure\r",
+									"pm.test('PhotoUrls is an array', () => {\r",
+									"    pm.expect(response.photoUrls).to.be.an('array');\r",
+									"    response.photoUrls.forEach(url => {\r",
+									"        pm.expect(url).to.be.a('string');\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Test for status value\r",
+									"pm.test('Status is available', () => {\r",
+									"    pm.expect(response.status).to.equal('available');\r",
+									"});\r",
+									"\r",
+									"pm.test('verify that the response value = request value', () => {\r",
+									"    const petId = pm.collectionVariables.get(\"petId\");\r",
+									"    const categoryId = pm.collectionVariables.get(\"categoryId\");\r",
+									"    const petName = pm.collectionVariables.get(\"petName\");\r",
+									"\r",
+									"    // Function to verify pet details\r",
+									"    function verifyPetDetails(response) {\r",
+									"        pm.expect(response.id).to.equal(petId);\r",
+									"        pm.expect(response.category.id).to.equal(categoryId);\r",
+									"        pm.expect(response.name).to.equal(petName);\r",
+									"    }\r",
+									"});\r",
+									"\r",
+									"// \r",
+									"pm.test(\"petId is a number\", function () {\r",
+									"    pm.expect(response.id).to.be.a('number');\r",
+									"pm.test(\"category Id  is a string\", function () {\r",
+									"    pm.expect(response.category.id).to.be.a('number');\r",
+									"    pm.test(\"pet name is a string\", function () {\r",
+									"    pm.expect(response.name).to.be.a('string');\r",
+									"    \r",
+									"});\r",
+									"});\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\":{{id}}\r\n  ,\r\n  \"category\": {\r\n    \"id\":{{category_id}},\r\n    \"name\": \"{{name}}\"\r\n  },\r\n  \"name\": \"cat4\", \r\n  \r\n  \"photoUrls\": [\r\n    \"{{photoUrls}}\"\r\n  ],\r\n  \"tags\": [\r\n    {\r\n      \"id\": 700\r\n    ,\r\n      \"name\": \"string\"\r\n    }\r\n  ],\r\n  \"status\": \"available\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/pet",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"pet"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "upload image",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/pet/:petId ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"pet",
+								":petId "
+							],
+							"query": [
+								{
+									"key": "uploadImage",
+									"value": "",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "petId ",
+									"value": "{{id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update existing pet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"pm.test('verify that the response value = request value', () => {\r",
+									"    const petId = pm.collectionVariables.get(\"petId\");\r",
+									"    const categoryId = pm.collectionVariables.get(\"categoryId\");\r",
+									"    const petName = pm.collectionVariables.get(\"petName\");\r",
+									"    const response = pm.response.json(); \r",
+									"\r",
+									"    // Function to verify pet details\r",
+									"    function verifyPetDetails(response) {\r",
+									"        pm.expect(response.id).to.equal(\"petId\");\r",
+									"        pm.expect(response.category.id).to.equal(\"categoryId\");\r",
+									"        pm.expect(response.name).to.equal(\"petName\");\r",
+									"    }\r",
+									"    \r",
+									"    pm.test(\"petId is a number\", function () {\r",
+									"        pm.expect(response.id).to.be.a('number'); // Updated to reference response\r",
+									"    });\r",
+									"    \r",
+									"    pm.test(\"category Id is a Number\", function () {\r",
+									"        pm.expect(response.category.id).to.be.a('number');\r",
+									"    });\r",
+									"    \r",
+									"    pm.test(\"pet name is a string\", function () {\r",
+									"        pm.expect(response.name).to.be.a('string');\r",
+									"    });\r",
+									"    pm.test(\"pet name not empty\", function () {\r",
+									"     pm.expect(response.name).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": {{id}},\r\n    \"category\": {\r\n        \"id\": {{category_id}},\r\n        \"name\":\"{{name}}\"\r\n    },\r\n    \"name\": \"vvvvvv\",\r\n    \"photoUrls\": [\r\n        \"https://i.postimg.cc/C5m7wtGv/VIER-PFOTEN-2016-07-08-011-4993x3455-1920x1329.jpg\"\r\n    ],\r\n    \"tags\": [\r\n        {\r\n            \"id\": 0,\r\n            \"name\": \"string\"\r\n        }\r\n    ],\r\n    \"status\": \"available\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/pet",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"pet"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET by Status values",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/pet/findByStatus?status=pending",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"pet",
+								"findByStatus"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "pending"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET by Pet ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"pm.test(\"Check pet ID match response or  error message if pet not found\", () => {\r",
+									"    const petId = (pm.collectionVariables.get(\"id\"));\r",
+									"    const jsonData = pm.response.json();\r",
+									"\r",
+									"    if (pm.response.code === 200) {\r",
+									"        pm.expect(jsonData.id).to.equal(petId);\r",
+									"    } else if (pm.response.code === 404) {\r",
+									"        pm.expect(jsonData.message).to.include(\"Pet not found\");\r",
+									"    } else {\r",
+									"        pm.expect.fail(\"Unexpected response code: \" + pm.response.code);\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/pet/:petId ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"pet",
+								":petId "
+							],
+							"variable": [
+								{
+									"key": "petId ",
+									"value": "{{id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Pet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"pm.test(\"Response body type contains 'unknown'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include('unknown');\r",
+									"});\r",
+									"pm.test(\"Response body message contains '300'\", function () {\r",
+									"    pm.expect(pm.response.text()).to.include('300');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{Base_URL}}/pet/:petId ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"pet",
+								":petId "
+							],
+							"query": [
+								{
+									"key": "uploadImage",
+									"value": "",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "petId ",
+									"value": "{{id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "second Delete the same pet",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body is empty\", function () {\r",
+									"    pm.expect(pm.response.text()).to.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response does not contain any unexpected headers\", function () {\r",
+									"    var headers = pm.response.headers.all();\r",
+									"    var expectedHeaders = [\"Content-Type\", , \"Authorization\",\"api_key\"];\r",
+									"\r",
+									"    headers.forEach(function (header) {\r",
+									"        pm.expect(\r",
+									"            expectedHeaders.includes(header.name),\r",
+									"            `Unexpected header found: ${header.name}`\r",
+									"        ).to.be.true;\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/pet/:petId ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"pet",
+								":petId "
+							],
+							"variable": [
+								{
+									"key": "petId ",
+									"value": "{{id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET by Pet ID after deleting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {\r",
+									"    pm.response.to.have.status(404);\r",
+									"});\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get('content-type')).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message is correct\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.message).to.equal(\"Pet not found\");\r",
+									"    pm.expect(jsonData.code).to.equal(1);\r",
+									"    pm.expect(jsonData.type).to.equal(\"error\");\r",
+									"\r",
+									"\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/pet/:petId ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"pet",
+								":petId "
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "id",
+									"value": "",
+									"disabled": true
+								}
+							],
+							"variable": [
+								{
+									"key": "petId ",
+									"value": "{{id}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var timeStamp = new Date().getTime(); // Generate a unique timestamp\r",
+									"console.log(timeStamp)\r",
+									"var email = \"mohamed_\"+ timeStamp+ \"@Gmail.com\"\r",
+									"pm.collectionVariables.set(\"email\", email) // Set the client email as a collection variable\r",
+									"\r",
+									"function getRandomString(length) {\r",
+									"    const chars = \"abcdefghijklmnopqrstuvwxyz\";\r",
+									"    let result = \"\";\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"function getRandomPassword(length) {\r",
+									"    const chars = \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*\";\r",
+									"    let result = \"\";\r",
+									"    for (let i = 0; i < length; i++) {\r",
+									"        result += chars.charAt(Math.floor(Math.random() * chars.length));\r",
+									"    }\r",
+									"    return result;\r",
+									"}\r",
+									"\r",
+									"// Generate random values\r",
+									"const firstName = getRandomString(6);\r",
+									"const lastName = getRandomString(6);\r",
+									"const username = firstName + \".\" + lastName + Math.floor(Math.random() * 1000);\r",
+									"const password = getRandomPassword(10);\r",
+									"\r",
+									"// Set them as collection variables\r",
+									"pm.collectionVariables.set(\"firstname\", firstName);\r",
+									"pm.collectionVariables.set(\"lastname\", lastName);\r",
+									"pm.collectionVariables.set(\"username\", username);\r",
+									"pm.collectionVariables.set(\"password\", password);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var message = pm.response.json().message;\r",
+									"pm.collectionVariables.set(\"accessToken\", message);\r",
+									"console.log(\"access Token : \"+ message); \r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Check for status code\r",
+									"pm.test(\"Check for status code\", function () {\r",
+									"    pm.expect(pm.response.code).to.equal(200);\r",
+									"});\r",
+									"// Check for response time\r",
+									"pm.test(\"Check for response time\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"// Validate response content type\r",
+									"pm.test(\"Validate response content type\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.equal('application/json');\r",
+									"});\r",
+									"// Validate response structure\r",
+									"pm.test(\"Validate response structure\", function () {\r",
+									"    pm.expect(response).to.have.all.keys('code', 'type', 'message');\r",
+									"});\r",
+									"// Validate 'code' field\r",
+									"pm.test(\"Validate 'code' field\", function () {\r",
+									"    pm.expect(response.code).to.exist;\r",
+									"    pm.expect(response.code).to.be.a('number');\r",
+									"});\r",
+									"// Validate 'type' field\r",
+									"pm.test(\"Validate 'type' field\", function () {\r",
+									"    pm.expect(response.type).to.exist;\r",
+									"    pm.expect(response.type).to.be.a('string');\r",
+									"});\r",
+									"// Validate 'access token' field\r",
+									"pm.test(\"Validate 'access token' field\", function () {\r",
+									"    pm.expect(response.message).to.exist;\r",
+									"    pm.expect(response.message).to.be.a('string'); \r",
+									"});\r",
+									"let jsonData = pm.response.json();\r",
+									"let accessToken = jsonData.message;\r",
+									"\r",
+									"// خزّن التوكن عشان تستخدمه في باقي الريكوستات\r",
+									"pm.collectionVariables.set(\"accessToken\", accessToken);\r",
+									"\r",
+									"// هات آخر توكن محفوظ\r",
+									"let previousToken = pm.collectionVariables.get(\"previous_token\");\r",
+									"\r",
+									"// اطبع في الـ Console (علشان تتأكد بنفسك)\r",
+									"console.log(\"Previous Token:\", previousToken);\r",
+									"console.log(\"Current Token:\", accessToken);\r",
+									"\r",
+									"// اختبر إن التوكن الجديد مختلف عن اللي قبله\r",
+									"if (previousToken) {\r",
+									"    pm.test(\"Access token should be different from the previous one\", function () {\r",
+									"        pm.expect(accessToken).to.not.eql(previousToken);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"// خزّن التوكن ده علشان يتقارن المرة الجاية\r",
+									"pm.collectionVariables.set(\"previous_token\", accessToken);\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 5,\r\n  \"username\": \"{{username}}\",\r\n  \"firstName\": \"{{firstname}}\",\r\n  \"lastName\": \"{{lastname}}\",\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"phone\": \"string\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/user",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"user"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{Base_URL}}/user/login?username ={{username}}&password ={{password}}",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"user",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username ",
+									"value": "{{username}}"
+								},
+								{
+									"key": "password ",
+									"value": "{{password}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create List Of Users",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{Base_URL}}/user/createWithList",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"user",
+								"createWithList"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{Base_URL}}/user/:username ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"user",
+								":username "
+							],
+							"variable": [
+								{
+									"key": "username ",
+									"value": "{{username}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": 5,\r\n  \"username\": \"{{username}}\",\r\n  \"firstName\": \"{{firstname}}\",\r\n  \"lastName\": \"{{lastname}}\",\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"{{password}}\",\r\n  \"phone\": \"string\",\r\n  \"userStatus\": 0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/user/:username ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"user",
+								":username "
+							],
+							"variable": [
+								{
+									"key": "username ",
+									"value": "{{username}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{Base_URL}}/user/:username ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"user",
+								":username "
+							],
+							"variable": [
+								{
+									"key": "username ",
+									"value": "{{username}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User After Deleting",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{Base_URL}}/user/:username ",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"user",
+								":username "
+							],
+							"variable": [
+								{
+									"key": "username ",
+									"value": "{{username}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/user/logout",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"user",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Store",
+			"item": [
+				{
+					"name": "Get inventory",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"pm.test(\"verify that the value and key appear correctly and the value is number\", function () {\r",
+									"// Test for the presence of keys and their types\r",
+									"const expectedKeys = {\r",
+									"    \"1234\": \"number\",\r",
+									"    \"sold\": \"number\",\r",
+									"    \"Big\": \"number\",\r",
+									"    \"approved\": \"number\",\r",
+									"    \"COMPLETE\": \"number\",\r",
+									"    \"string\": \"number\",\r",
+									"    \"holy\": \"number\",\r",
+									"    \"pendiing\": \"number\",\r",
+									"    \"pending\": \"number\",\r",
+									"    \"available\": \"number\",\r",
+									"    \"homeless\": \"number\",\r",
+									"    \"Not available\": \"number\"\r",
+									"};\r",
+									"\r",
+									"Object.keys(expectedKeys).forEach(key => {\r",
+									"    pm.expect(response).to.have.property(key);\r",
+									"    pm.expect(response[key]).to.be.a(expectedKeys[key]);\r",
+									"});\r",
+									"\r",
+									"// Test to ensure values can change after sending an update\r",
+									"pm.test(\"Check if values can be updated\", function () {\r",
+									"    const initialSoldValue = response.sold;\r",
+									"\r",
+									"    // Simulate an update by changing the value (this would normally be done via another request)\r",
+									"    pm.sendRequest({\r",
+									"        url: pm.request.url,\r",
+									"        method: 'GET'\r",
+									"    }, function (err, res) {\r",
+									"        const newResponse = res.json();\r",
+									"        const updatedSoldValue = newResponse.sold;\r",
+									"\r",
+									"        pm.expect(updatedSoldValue).to.not.equal(initialSoldValue);\r",
+									"    });\r",
+									"});\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/store/inventory",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"store",
+								"inventory"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Order",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function getRandomNumber() {\r",
+									"    return Math.floor(Math.random() * 5) * 1   ;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"randomnumber\", getRandomNumber());\r",
+									"console.log(\"RandomNumber set  :\" +  pm.variables.get(\"randomnumber\") );"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.collectionVariables.set(\"orderId\", pm.response.json().id);\r",
+									"console.log(\"order Id  : \" + pm.response.json().id);\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"pm.test(\"Response body has correct data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    \r",
+									"    // Check that keys exist and have correct types\r",
+									"    pm.expect(jsonData).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('petId').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('quantity').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('shipDate').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('status').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('complete').that.is.a('boolean');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"order ID is not empty\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.id).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Pet ID is not empty\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.petId).to.not.be.empty;\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{orderId}},\r\n  \"petId\": {{id}},\r\n  \"quantity\": {{randomnumber}},\r\n  \"shipDate\": \"2025-07-17T08:50:19.166Z\",\r\n  \"status\": \"placed\",\r\n  \"complete\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/store/order",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"store",
+								"order"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Test for response time\r",
+									"pm.test(\"Response time is less than 700ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(700);\r",
+									"});\r",
+									"\r",
+									"// Test for content type\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+									"});\r",
+									"\r",
+									"// Test for presence of required fields\r",
+									"const requiredFields = ['id', 'petId', 'quantity', 'shipDate', 'status', 'complete' ];\r",
+									"requiredFields.forEach(field => {\r",
+									"    pm.test(`Response should contain ${field}`, function () {\r",
+									"        pm.expect(response).to.have.property(field);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response body has correct data\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    \r",
+									"    // Check that keys exist and have correct types\r",
+									"    pm.expect(jsonData).to.have.property('id').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('petId').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('quantity').that.is.a('number');\r",
+									"    pm.expect(jsonData).to.have.property('shipDate').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('status').that.is.a('string');\r",
+									"    pm.expect(jsonData).to.have.property('complete').that.is.a('boolean');\r",
+									"});\r",
+									"\r",
+									"// Test for match response id with request order id from collectionVariables\r",
+									"pm.test(\"Response id matches request order id from collectionVariables\", function () {\r",
+									"    pm.expect(response.id).to.equal(pm.collectionVariables.get(\"orderId\"));\r",
+									"});\r",
+									"pm.test(\"Response petId matches request pet Id from collectionVariables\", function () {\r",
+									"    pm.expect(response.petId).to.equal(pm.collectionVariables.get(\"petId\"));\r",
+									"});\r",
+									"pm.test(\"Response quantity matches request randomnumber from collectionVariables\", function () {\r",
+									"    pm.expect(response.quantity).to.equal(pm.collectionVariables.get(\"randomnumber\"));\r",
+									"});\r",
+									"const petId = pm.collectionVariables.get(\"petId\");\r",
+									"const quantity = pm.collectionVariables.get(\"randomnumber\"); \r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{orderId}},\r\n  \"petId\": {{id}},\r\n  \"quantity\": {{randomnumber}},\r\n  \"shipDate\": \"2025-07-17T08:50:19.166Z\",\r\n  \"status\": \"placed\",\r\n  \"complete\": true\r\n}"
+						},
+						"url": {
+							"raw": "{{Base_URL}}/store/order/:order id",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"store",
+								"order",
+								":order id"
+							],
+							"variable": [
+								{
+									"key": "order id",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "first Delete Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Check for status code\r",
+									"pm.test(\"Check for status code\", function () {\r",
+									"pm.expect(pm.response.code).to.equal(200); // Fixed expected status code to 404\r",
+									"});\r",
+									"// Check for response time\r",
+									"pm.test(\"Check for response time\", function () {\r",
+									"pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"// Validate response content type\r",
+									"pm.test(\"Validate response content type\", function () {\r",
+									"pm.expect(pm.response.headers.get('Content-Type')).to.equal('application/json');\r",
+									"});\r",
+									"// Validate response structure\r",
+									"pm.test(\"Validate response structure\", function () {\r",
+									"pm.expect(response).to.have.all.keys('code', 'type', 'message'); // Fixed expected keys\r",
+									"});\r",
+									"// Validate 'code' field\r",
+									"pm.test(\" Validate 'code' field\", function () {\r",
+									"pm.expect(response.code).to.exist;\r",
+									"pm.expect(response.code).to.be.a('number');\r",
+									"});\r",
+									"// Validate 'type' field\r",
+									"pm.test(\"Validate 'type' field\", function () {\r",
+									"pm.expect(response.type).to.exist;\r",
+									"pm.expect(response.type).to.be.a('string');\r",
+									"});\r",
+									"// Validate 'message' field\r",
+									"pm.test(\"Validate 'message' field\", function () {\r",
+									"pm.expect(response.message).to.exist;\r",
+									"pm.expect(response.message).to.be.a('number');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/store/order/:order id",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"store",
+								"order",
+								":order id"
+							],
+							"variable": [
+								{
+									"key": "order id",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Second Delete Order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"\r",
+									"// Validate response content type\r",
+									"pm.test(\"Validate response content type\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.equal('application/json');\r",
+									"});\r",
+									"\r",
+									"// Validate response structure\r",
+									"var response = pm.response.json(); // Added response initialization\r",
+									"pm.test(\"Validate response structure\", function () {\r",
+									"    pm.expect(response).to.have.all.keys('code', 'type', 'message'); // Fixed expected keys\r",
+									"});\r",
+									"\r",
+									"// Validate 'code' field\r",
+									"pm.test(\"Validate 'code' field\", function () {\r",
+									"    pm.expect(response.code).to.exist;\r",
+									"    pm.expect(response.code).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"// Validate 'type' field\r",
+									"pm.test(\"Validate 'type' field\", function () {\r",
+									"    pm.expect(response.type).to.exist;\r",
+									"    pm.expect(response.type).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Validate 'message' field\r",
+									"pm.test(\"Validate 'message' field\", function () {\r",
+									"    pm.expect(response.message).to.exist;\r",
+									"    pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Base_URL}}/store/order/:order id",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"store",
+								"order",
+								":order id"
+							],
+							"variable": [
+								{
+									"key": "order id",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order after deleting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Check for status code\r",
+									"pm.test(\"Check for status code\", function () {\r",
+									"pm.expect(pm.response.code).to.equal(404); // Fixed expected status code to 404\r",
+									"});\r",
+									"// Check for response time\r",
+									"pm.test(\"Check for response time\", function () {\r",
+									"pm.expect(pm.response.responseTime).to.be.below(1000);\r",
+									"});\r",
+									"// Validate response content type\r",
+									"pm.test(\"Validate response content type\", function () {\r",
+									"pm.expect(pm.response.headers.get('Content-Type')).to.equal('application/json');\r",
+									"});\r",
+									"// Validate response structure\r",
+									"pm.test(\"Validate response structure\", function () {\r",
+									"pm.expect(response).to.have.all.keys('code', 'type', 'message'); // Fixed expected keys\r",
+									"});\r",
+									"// Validate 'code' field\r",
+									"pm.test(\" Validate 'code' field\", function () {\r",
+									"pm.expect(response.code).to.exist;\r",
+									"pm.expect(response.code).to.be.a('number');\r",
+									"});\r",
+									"// Validate 'type' field\r",
+									"pm.test(\"Validate 'type' field\", function () {\r",
+									"pm.expect(response.type).to.exist;\r",
+									"pm.expect(response.type).to.be.a('string');\r",
+									"});\r",
+									"// Validate 'message' field\r",
+									"pm.test(\"Validate 'message' field\", function () {\r",
+									"pm.expect(response.message).to.exist;\r",
+									"pm.expect(response.message).to.be.a('string');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"id\": {{orderId}},\r\n  \"petId\": {{id}},\r\n  \"quantity\": {{randomnumber}},\r\n  \"shipDate\": \"2025-07-17T08:50:19.166Z\",\r\n  \"status\": \"placed\",\r\n  \"complete\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Base_URL}}/store/order/:order id",
+							"host": [
+								"{{Base_URL}}"
+							],
+							"path": [
+								"store",
+								"order",
+								":order id"
+							],
+							"variable": [
+								{
+									"key": "order id",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "id",
+			"value": ""
+		},
+		{
+			"key": "name",
+			"value": ""
+		},
+		{
+			"key": "photoUrls",
+			"value": ""
+		},
+		{
+			"key": "category_id",
+			"value": ""
+		},
+		{
+			"key": "orderId",
+			"value": ""
+		},
+		{
+			"key": "randomnumber",
+			"value": ""
+		},
+		{
+			"key": "email",
+			"value": ""
+		},
+		{
+			"key": "firstname",
+			"value": ""
+		},
+		{
+			"key": "lastname",
+			"value": ""
+		},
+		{
+			"key": "username",
+			"value": ""
+		},
+		{
+			"key": "password",
+			"value": ""
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "previous_token",
+			"value": ""
+		}
+	]
+}

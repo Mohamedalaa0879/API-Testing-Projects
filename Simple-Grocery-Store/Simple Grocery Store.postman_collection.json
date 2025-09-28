@@ -1,0 +1,1074 @@
+{
+	"info": {
+		"_postman_id": "8ab5bea6-bf3e-49e4-aed2-88664a17d6b6",
+		"name": "Simple Grocery Store",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30166272"
+	},
+	"item": [
+		{
+			"name": "Registration",
+			"item": [
+				{
+					"name": "Register  new  client",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"pm.test(\"Access token is present and the value  is a non-empty, string\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response.accessToken).to.exist;\r",
+									"    pm.expect(response.accessToken).to.be.a('string').that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"var accessToken = pm.response.json().accessToken;\r",
+									"pm.collectionVariables.set(\"accessToken\", accessToken);\r",
+									"console.log(\"access Token : \"+ accessToken); \r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var timeStamp = new Date().getTime(); // Generate a unique timestamp\r",
+									"console.log(timeStamp)\r",
+									"var clientEmail = \"mohamed_\"+ timeStamp+ \"@Gmail.com\"\r",
+									"pm.collectionVariables.set(\"clientEmail\", clientEmail) // Set the client email as a collection variable\r",
+									"var clientName = \"mohamed_\"+ timeStamp\r",
+									"pm.collectionVariables.set(\"clientName\", clientName) // Set the client name as a collection variable\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"clientName\": \"{{clientName}}\",\r\n   \"clientEmail\": \"{{clientEmail}}\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Grocery Store_URL}}/api-clients",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"api-clients"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Status",
+			"item": [
+				{
+					"name": "Checking status",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has the required field 'status'\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData).to.have.property('status').that.is.a('string');\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response body is in JSON format\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"The status field must be a non-empty string\", function () {\r",
+									"    const responseData = pm.response.json();\r",
+									"\r",
+									"    pm.expect(responseData).to.be.an('object');\r",
+									"    pm.expect(responseData.status).to.exist.and.to.be.a('string').and.to.have.lengthOf.at.least(1, \"Value should not be empty\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify response body contains status with value 'UP'\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    pm.expect(response).to.have.property('status', 'UP');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/status",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Checking Health",
+					"request": {
+						"method": "HEAD",
+						"header": [],
+						"url": {
+							"raw": "https://simple-grocery-store-api.click",
+							"protocol": "https",
+							"host": [
+								"simple-grocery-store-api",
+								"click"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get all products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// Function to return a random product ID from the response\r",
+									"function getRandomProductId(products) {\r",
+									"    const randomIndex = Math.floor(Math.random() * products.length);\r",
+									"    return products[randomIndex].id;\r",
+									"}\r",
+									"\r",
+									"// Get a random product ID and store it in a variable\r",
+									"const randomProductId = getRandomProductId(pm.response.json());\r",
+									"pm.collectionVariables.set(\"ProductId\", randomProductId); // Store the random ID in an collection variable\r",
+									"console.log(\"Random Product ID: \" + randomProductId); // Log the random ID to the console for debugging purposes\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"packages": {},
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/products",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Avilable Products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"verify each product in the inStock\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    response.forEach(product => {\r",
+									"        pm.expect(product.inStock).to.be.true; // Check if each product is in stock\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"\r",
+									"// Test to check response time is less than 300ms\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(300);\r",
+									"});\r",
+									"\r",
+									"// Test to verify the content-type of the response\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+									"});\r",
+									"\r",
+									"// Test to check each product has required fields\r",
+									"pm.test(\"check each product has required fields\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"    response.forEach(product => {\r",
+									"        pm.expect(product).to.have.all.keys('id', 'category', 'name', 'inStock'); // Check for required keys\r",
+									"        pm.expect(product.id).to.be.a('number'); // Check if id is a number\r",
+									"        pm.expect(product.category).to.be.a('string'); // Check if category is a string\r",
+									"        pm.expect(product.name).to.be.a('string'); // Check if name is a string\r",
+									"        pm.expect(product.inStock).to.be.a('boolean'); // Check if inStock is a boolean\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/products?available=true",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"products"
+							],
+							"query": [
+								{
+									"key": "available",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get specific product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 500ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response matches the requested product ID\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var expectedId = pm.request.url.getPath().split('/').pop(); // Extracting productId from the URL\r",
+									"    pm.expect(jsonData.id).to.eql(Number(expectedId));\r",
+									"});\r",
+									"//or\r",
+									"pm.test(\"id=random id\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.id).to.eql(pm.collectionVariables.get(\"ProductId\"));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response has valid structure and data types\", function () {\r",
+									"    const response = pm.response.json();\r",
+									"\r",
+									"    // Check if the response body has the required properties\r",
+									"    pm.expect(response).to.have.all.keys('id', 'category', 'name', 'manufacturer', 'price', 'current-stock', 'inStock');\r",
+									"\r",
+									"    // Validate the data types of the properties\r",
+									"    pm.expect(response.id).to.be.a('number');\r",
+									"    pm.expect(response.category).to.be.a('string');\r",
+									"    pm.expect(response.name).to.be.a('string');\r",
+									"    pm.expect(response.manufacturer).to.be.a('string');\r",
+									"    pm.expect(response.price).to.be.a('number');\r",
+									"    pm.expect(response['current-stock']).to.be.a('number');\r",
+									"    pm.expect(response.inStock).to.be.a('boolean');\r",
+									"\r",
+									"    // Check if the price is a positive value\r",
+									"    pm.expect(response.price).to.be.at.least(0);\r",
+									"\r",
+									"    // Validate that the current stock is a non-negative integer\r",
+									"    pm.expect(response['current-stock']).to.be.at.least(0);\r",
+									"    pm.expect(Number.isInteger(response['current-stock'])).to.be.true;\r",
+									"\r",
+									"    // Check if the product is out of stock based on 'current-stock' value\r",
+									"    if (response['current-stock'] === 0) {\r",
+									"        pm.expect(response.inStock).to.be.false;\r",
+									"    } else {\r",
+									"        pm.expect(response.inStock).to.be.true;\r",
+									"    }\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/products/:productId",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"products",
+								":productId"
+							],
+							"variable": [
+								{
+									"key": "productId",
+									"value": "{{ProductId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cart",
+			"item": [
+				{
+					"name": "Create a new cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Cart created successfully created\", function () {\r",
+									"    pm.response.to.have.jsonBody('created', true);\r",
+									"});\r",
+									"\r",
+									"// Test for response time\r",
+									"pm.test(\"Response time is less than 600ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(600);\r",
+									"});\r",
+									"\r",
+									"// Test for content-type header\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get('content-type')).to.include(\"application/json\");\r",
+									"});\r",
+									"\r",
+									"// Test for cartId presence, type and not empty\r",
+									"const responseJson = pm.response.json();\r",
+									"pm.test(\"cartId is appear, and the cari id value is a string, and not empty\", function () {\r",
+									"    pm.expect(responseJson.cartId).to.exist;\r",
+									"    pm.expect(responseJson.cartId).to.be.a('string');\r",
+									"    pm.expect(responseJson.cartId).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"// Save cartId to collection variable\r",
+									"pm.collectionVariables.set(\"cartId\", responseJson.cartId);\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/carts",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add an item to cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"pm.test(\"Response time is less than 200ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(200);\r",
+									"});\r",
+									"pm.test(\"Item created successfully\", function () {\r",
+									"    pm.expect(pm.response.json().created).to.be.true;\r",
+									"});\r",
+									"pm.test(\"Item ID is not null\", function () {\r",
+									"    pm.expect(pm.response.json().itemId).to.not.be.null;\r",
+									"});\r",
+									"pm.test(\"Item ID is a number\", function () {\r",
+									"    pm.expect(pm.response.json().itemId).to.be.a('number');\r",
+									"});\r",
+									"\r",
+									"var itemId = pm.response.json().itemId;\r",
+									"pm.collectionVariables.set(\"itemId\", itemId);\r",
+									"console.log(\"Item ID: \"+ itemId); \r",
+									"\r",
+									"// Test for checking the content-type of the response\r",
+									"pm.test(\"Response content-type is JSON\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+									"});\r",
+									"\r",
+									"// Test for verifying that the response body is not empty\r",
+									"pm.test(\"Response body is not empty\", function () {\r",
+									"    pm.expect(pm.response.json()).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"// Test for validating the structure of the response body\r",
+									"pm.test(\"Response body has the expected properties\", function () {\r",
+									"    const responseBody = pm.response.json();\r",
+									"    pm.expect(responseBody).to.have.all.keys('created', 'itemId');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"productId\": {{ProductId}} }\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Grocery Store_URL}}/carts/:cartId/items",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"carts",
+								":cartId",
+								"items"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Modify an item in the cart",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"function getRandomNumber() {\r",
+									"    return Math.floor(Math.random() * 5) * 1   ;\r",
+									"}\r",
+									"pm.collectionVariables.set(\"randomnumber\", getRandomNumber());\r",
+									"console.log(\"RandomNumber set  :\" +  pm.variables.get(\"randomnumber\") );\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n   \"quantity\": {{randomnumber}}\r\n   \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Grocery Store_URL}}/carts/:cartId/items/:itemId",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"carts",
+								":cartId",
+								"items",
+								":itemId"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								},
+								{
+									"key": "itemId",
+									"value": "{{itemId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a cart",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/carts/:cartId",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"carts",
+								":cartId"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get cart items",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/carts/:cartId/items",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"carts",
+								":cartId",
+								"items"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete item",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/carts/:cartId/items/:itemId",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"carts",
+								":cartId",
+								"items",
+								":itemId"
+							],
+							"variable": [
+								{
+									"key": "cartId",
+									"value": "{{cartId}}"
+								},
+								{
+									"key": "itemId",
+									"value": "{{itemId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Orders",
+			"item": [
+				{
+					"name": "Create a new order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"var orderId = pm.response.json().orderId;\r",
+									"pm.collectionVariables.set(\"orderId\", orderId);\r",
+									"console.log(\"order Id  : \" + orderId);\r",
+									"\r",
+									"pm.test(\"Order created successfully\", function () {\r",
+									"    pm.expect(pm.response.json().created).to.be.true;\r",
+									"\r",
+									"});\r",
+									"pm.test(\"Order ID is not empty\", function () {\r",
+									"    pm.expect(orderId).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Order ID is a string\", function () {\r",
+									"    pm.expect(orderId).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Order ID contains only alphanumeric characters\", function () {\r",
+									"    pm.expect(orderId).to.match(/^[a-zA-Z0-9]+$/);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Order ID length is between 10 and 20 characters\", function () {\r",
+									"    pm.expect(orderId.length).to.be.eql(21);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Order ID is unique\", function () {\r",
+									"    pm.expect(pm.response.json().orderId).to.not.equal(\"previousOrderId\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Order ID is not null\", function () {\r",
+									"    pm.expect(orderId).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Order ID is not a boolean\", function () {\r",
+									"    pm.expect(orderId).to.not.be.a('boolean');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Order ID is not an array\", function () {\r",
+									"    pm.expect(orderId).to.not.be.an('array');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Order ID is not an object\", function () {\r",
+									"    pm.expect(orderId).to.not.be.an('object');\r",
+									"});\r",
+									"\r",
+									"var created = pm.response.json().created; // Added this line to define 'created'\r",
+									"\r",
+									"pm.test(\"created is not empty\", function () {\r",
+									"    pm.expect(created).to.not.be.empty;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"created value is a boolean\", function () {\r",
+									"    pm.expect(created).to.be.a('boolean');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"created value is true\", function () {\r",
+									"    pm.expect(created).to.be.true;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"created value is not null\", function () {\r",
+									"    pm.expect(created).to.not.be.null;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"created value is not a string\", function () {\r",
+									"    pm.expect(created).to.not.be.a('string');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"created value is not a number\", function () {\r",
+									"    pm.expect(created).to.not.be.a('number');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"created value is not an array\", function () {\r",
+									"    pm.expect(created).to.not.be.an('array');\r",
+									"});\r",
+									"\r",
+									"pm.test(\"created value is not an object\", function () {\r",
+									"    pm.expect(created).to.not.be.an('object');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"cartId\": \"{{cartId}}\",\r\n    \"customerName\": \"{{clientName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{Grocery Store_URL}}/orders",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"orders"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a single order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"const response = pm.response.json();\r",
+									"\r",
+									"// Test for response time\r",
+									"pm.test(\"Response time is less than 700ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(700);\r",
+									"});\r",
+									"\r",
+									"// Test for content type\r",
+									"pm.test(\"Content-Type is application/json\", function () {\r",
+									"    pm.expect(pm.response.headers.get('Content-Type')).to.include('application/json');\r",
+									"});\r",
+									"\r",
+									"// Test for presence of required fields\r",
+									"const requiredFields = ['id', 'items', 'customerName', 'createdBy', 'created', 'timestamp', 'processed', 'invoice'];\r",
+									"requiredFields.forEach(field => {\r",
+									"    pm.test(`Response should contain ${field}`, function () {\r",
+									"        pm.expect(response).to.have.property(field);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Test for items array\r",
+									"pm.test(\"Items should be an array and not empty\", function () {\r",
+									"    pm.expect(response.items).to.be.an('array').that.is.not.empty;\r",
+									"});\r",
+									"\r",
+									"// Test for properties in items\r",
+									"response.items.forEach(item => {\r",
+									"    const itemFields = ['id', 'productId', 'quantity'];\r",
+									"    itemFields.forEach(field => {\r",
+									"        pm.test(`Item should contain ${field}`, function () {\r",
+									"            pm.expect(item).to.have.property(field);\r",
+									"        });\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"// Test for processed boolean field\r",
+									"pm.test(\"Processed should be a boolean\", function () {\r",
+									"    pm.expect(response.processed).to.be.a('boolean');\r",
+									"});\r",
+									"\r",
+									"// Test for invoice field format\r",
+									"pm.test(\"Invoice should be a string\", function () {\r",
+									"    pm.expect(response.invoice).to.be.a('string');\r",
+									"});\r",
+									"\r",
+									"// Test for match response id with request order id from collectionVariables\r",
+									"pm.test(\"Response id matches request order id from collectionVariables\", function () {\r",
+									"    pm.expect(response.id).to.equal(pm.collectionVariables.get(\"orderId\"));\r",
+									"});\r",
+									"\r",
+									"const itemId = pm.collectionVariables.get(\"itemId\");\r",
+									"const productId = pm.collectionVariables.get(\"ProductId\"); \r",
+									"const randomnumber = pm.collectionVariables.get(\"randomnumber\");\r",
+									"\r",
+									"response.items.forEach(item => {\r",
+									"    pm.test(\"Item fields should match collection variables value\", function () {\r",
+									"        pm.expect(item.id).to.equal(itemId);\r",
+									"        pm.expect(item.productId).to.equal(productId); \r",
+									"        pm.expect(item.quantity).to.equal(randomnumber);\r",
+									"    });\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/orders/:orderId?invoice=true",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"orders",
+								":orderId"
+							],
+							"query": [
+								{
+									"key": "invoice",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete an order",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {\r",
+									"    pm.response.to.have.status(204);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/orders/:orderId",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"orders",
+								":orderId"
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get order after deleting",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// Bugggg\r",
+									"pm.test(\"verify error message appear\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.value).to.include(\"no order with id\");\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{accessToken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{Grocery Store_URL}}/orders/:orderId?invoice=true",
+							"host": [
+								"{{Grocery Store_URL}}"
+							],
+							"path": [
+								"orders",
+								":orderId"
+							],
+							"query": [
+								{
+									"key": "invoice",
+									"value": "true"
+								}
+							],
+							"variable": [
+								{
+									"key": "orderId",
+									"value": "{{orderId}}"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"value": "",
+			"disabled": true
+		},
+		{
+			"value": "",
+			"disabled": true
+		},
+		{
+			"key": "clientEmail",
+			"value": ""
+		},
+		{
+			"key": "clientName",
+			"value": ""
+		},
+		{
+			"key": "ProductId",
+			"value": ""
+		},
+		{
+			"key": "cartId",
+			"value": ""
+		},
+		{
+			"key": "itemId",
+			"value": ""
+		},
+		{
+			"key": "accessToken",
+			"value": ""
+		},
+		{
+			"key": "orderId",
+			"value": ""
+		},
+		{
+			"key": "randomnumber",
+			"value": ""
+		}
+	]
+}
