@@ -17,8 +17,7 @@ Postman collections and assertions are included to automate validation and impro
 
 **🔗 Resources:**  
 - [Swagger Petstore API Documentation](https://petstore.swagger.io/#/pet)  
-- [Postman Collection](#) *(replace # with actual GitHub file link if uploaded)*  
-
+- [Postman Collection](#) 
 ---
 
 ### 2️⃣ Simple Grocery Store API
@@ -28,7 +27,7 @@ Postman collections and assertions are included to automate validation and impro
 
 **🔗 Resources:**  
 - [Simple Grocery Store API](https://simple-grocery-store-api.click)  
-- [Postman Collection](#) *(replace # with actual GitHub file link if uploaded)*  
+- [Postman Collection](#)  
 
 ---
 
