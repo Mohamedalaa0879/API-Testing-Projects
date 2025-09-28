@@ -38,7 +38,3 @@ Postman collections and assertions are included to automate validation and impro
 - ✅ Automated Postman test scripts & assertions  
 - ✅ Environment setup for testing  
 
----
-
-## 📂 Project Structure
-
